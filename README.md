@@ -2,8 +2,8 @@
 leetcode learning  notes
 
 ## 数据结构与算法的总结
-- [Stack](./doc/datastru/stack.md)
-- [数据结构](./thinkings/basic-data-structure.md)
+- [Stack](./doc/stack.md)
+- [数组](./doc/array.md)
 - [基础算法](./thinkings/basic-algorithm.md)
 - [二叉树的遍历](./thinkings/binary-tree-traversal.md) 🖊
 - [动态规划](./thinkings/dynamic-programming.md)

@@ -13,7 +13,23 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.5.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.61</version>
+        </dependency>
     </dependencies>
-
+    <build>
+        <plugins>
+            <plugin>    <!--plugins要写在build标签下，不然无法识别 -->
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>    <!--maven-compiler-plugin版本写一个中央仓库有的版本，保存后它会自动下载 -->
+                <configuration>
+                    <source>11</source>    <!--我的jdk是10.0.1的，写成10.0.1不好用，所以就写成10了 -->
+                    <target>11</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
