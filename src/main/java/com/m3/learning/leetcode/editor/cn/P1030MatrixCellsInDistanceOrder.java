@@ -51,10 +51,13 @@ import java.util.*;
 public class P1030MatrixCellsInDistanceOrder {
     public static void main(String[] args) {
         Solution solution = new P1030MatrixCellsInDistanceOrder().new Solution();
+        Solution2 solution2 = new P1030MatrixCellsInDistanceOrder().new Solution2();
 
         int R = 1, C = 2, r0 = 0, c0 = 0;
         int[][] values = solution.allCellsDistOrder(R, C, r0, c0);
         int[][] predicts = new int[][]{{0,0},{0,1}};
+        System.out.println(Arrays.deepEquals(values, predicts));
+        values = solution2.allCellsDistOrder(R, C, r0, c0);
         System.out.println(Arrays.deepEquals(values, predicts));
 
         R = 2;
@@ -64,6 +67,8 @@ public class P1030MatrixCellsInDistanceOrder {
         values = solution.allCellsDistOrder(R, C, r0, c0);
         predicts = new int[][]{{0,1},{0,0},{1,1},{1,0}};
         System.out.println(Arrays.deepEquals(values, predicts));
+        values = solution2.allCellsDistOrder(R, C, r0, c0);
+        System.out.println(Arrays.deepEquals(values, predicts));
 
         R = 2;
         C = 3;
@@ -72,32 +77,65 @@ public class P1030MatrixCellsInDistanceOrder {
         values = solution.allCellsDistOrder(R, C, r0, c0);
         predicts = new int[][]{{1,2},{0,2},{1,1},{0,1},{1,0},{0,0}};
         System.out.println(Arrays.deepEquals(values, predicts));
+        values = solution2.allCellsDistOrder(R, C, r0, c0);
+        System.out.println(Arrays.deepEquals(values, predicts));
     }
     
     //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
-    public int[][] allCellsDistOrder(int R, int C, int r0, int c0) {
-        List<int[]> cells = new ArrayList<>();
-        int len = R*C;
-        for(int i = 0; i < len; i++) {
-            cells.add(new int[]{i/C, i%C});
+    class Solution2 {
+        public int[][] allCellsDistOrder(int R, int C, int r0, int c0) {
+            List<int[]> cells = new ArrayList<>();
+            int len = R * C;
+            for (int i = 0; i < len; i++) {
+                cells.add(new int[]{i / C, i % C});
+            }
+
+            Collections.sort(cells, (p1, p2) -> {
+                return getDistance(p1, r0, c0) - getDistance(p2, r0, c0);
+            });
+
+            int[][] ret = new int[len][2];
+            for (int i = 0; i < len; i++) {
+                ret[i] = cells.get(i);
+            }
+            return ret;
         }
 
-        Collections.sort(cells, (p1, p2)-> {
-            return getDistance(p1, r0, c0) - getDistance(p2, r0, c0);
-        });
-
-        int[][] ret = new int[len][2];
-        for(int i = 0; i <len; i++) {
-            ret[i] = cells.get(i);
+        private int getDistance(int[] p, int r0, int c0) {
+            return Math.abs(p[0] - r0) + Math.abs(p[1] - c0);
         }
-        return ret;
     }
+    //leetcode submit region end(Prohibit modification and deletion)
 
-    private int getDistance(int[] p, int r0, int c0) {
-        return Math.abs(p[0]-r0) + Math.abs(p[1] - c0);
+    //leetcode submit region begin(Prohibit modification and deletion)
+    class Solution {
+        public int[][] allCellsDistOrder(int R, int C, int r0, int c0) {
+            int[][] ret = new int[R*C][2];
+            int dist = 0;
+            int cnt = 0;
+            int[] factor = {-1, 1};
+            while(cnt < R*C) {
+                for(int rowDist =0 ; rowDist <= dist; rowDist++) {
+                    int colDist = dist-rowDist;
+                    for(int i = 0; i < 2; i++) {
+                        int row = r0 + factor[i]*rowDist;
+                        for(int j = 0; j <2; j++) {
+                            int col = c0 + factor[j]*colDist;
+                            if(row >=0 && row < R && col >=0 && col < C) {
+                                ret[cnt][0] = row;
+                                ret[cnt][1] = col;
+                                cnt++;
+                            }
+                            if(colDist == 0) break;
+                        }
+                        if(rowDist == 0) break;
+                    }
+                }
+                dist++;
+            }
+            return ret;
+        }
+
     }
-}
-//leetcode submit region end(Prohibit modification and deletion)
-
+    //leetcode submit region end(Prohibit modification and deletion)
 }
