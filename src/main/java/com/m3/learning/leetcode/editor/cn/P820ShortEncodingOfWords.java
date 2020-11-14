@@ -30,17 +30,138 @@
 
 package com.m3.learning.leetcode.editor.cn;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class P820ShortEncodingOfWords {
     public static void main(String[] args) {
         Solution solution = new P820ShortEncodingOfWords().new Solution();
+        System.out.println(solution.minimumLengthEncoding(new String[]{"time", "me", "bell"}));
+        System.out.println(solution.minimumLengthEncoding(new String[]{"ti", "me", "imed", "med","im"}));
+        System.out.println(solution.minimumLengthEncoding(new String[]{"me", "time"}));
+        System.out.println(solution.minimumLengthEncoding(new String[]{"time", "atime","btime"}));
     }
     
     //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
+class Solution2 {
     public int minimumLengthEncoding(String[] words) {
-        return 0;
+        Map<Character, List<String>> dict = new HashMap<>();
+        int count=0;
+        for(String word : words) {
+            char key = word.charAt(word.length()-1);
+            List<String> dictList = dict.getOrDefault(key, new ArrayList<>());
+            boolean found = false;
+            for(int i = 0; i < dictList.size(); i++) {
+                String str = dictList.get(i);
+                if(word.endsWith(str)) {
+                    found=true;
+                    dictList.set(i, word);
+                    count += (word.length()-str.length());
+                }
+                else if(str.endsWith(word)) {
+                    found = true;
+                }
+            }
+            if(found == false) {
+                dictList.add(word);
+                count += (word.length()+1);
+            }
+            dict.put(key, dictList);
+        }
+        return count;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
 
+    //leetcode submit region begin(Prohibit modification and deletion)
+    class Solution {
+        public int minimumLengthEncoding(String[] words) {
+            Trie root = new Trie();
+            for(String word : words) {
+                root.insert(new StringBuffer(word).reverse().toString());
+            }
+            int sum = root.allLeafSize();
+            return sum;
+        }
+    }
+
+    class Trie {
+        Trie[] next = new Trie[26];
+        private boolean isEnd = false;
+
+        public void insert(String word) {
+            Trie curTrie = this;
+            for(char c : word.toCharArray()) {
+                if( curTrie.next[c-'a'] == null) {
+                    curTrie.next[c-'a'] = new Trie();
+                }
+                curTrie.isEnd = false;
+                curTrie = curTrie.next[c-'a'];
+            }
+            curTrie.isEnd = true;
+        }
+
+        public boolean startsWith(String prefix) {
+            Trie curTrie = this;
+            for(char c : prefix.toCharArray()) {
+                if( curTrie.next[c-'a'] == null) {
+                    return false;
+                }
+                curTrie = curTrie.next[c-'a'];
+            }
+            return true;
+        }
+
+        public boolean search(String word) {
+            Trie curTrie = this;
+            for(char c : word.toCharArray()) {
+                if( curTrie.next[c-'a'] == null) {
+                    return false;
+                }
+                curTrie = curTrie.next[c-'a'];
+            }
+            return curTrie.isEnd;
+        }
+
+        public int countNext() {
+            int count = 0;
+            for(Trie trie : next) {
+                if(trie != null)
+                    count++;
+            }
+            return count;
+        }
+
+        public int size() {
+            int size = 1;
+            for(Trie trie : next) {
+                if(trie != null)
+                    size+=trie.size();
+            }
+            return size;
+        }
+
+        public int allLeafSize() {
+            int sum = countDeep(1, this);
+            return sum;
+        }
+
+        private int countDeep(int curLayer, Trie trie) {
+            int sum = 0;
+            boolean hasChild = false;
+            for (Trie child : trie.next) {
+                if (child != null) {
+                    hasChild = true;
+                    sum += countDeep(curLayer + 1, child);
+                }
+            }
+            if(hasChild == false) {
+                return curLayer;
+            }
+            return sum;
+        }
+    }
+//leetcode submit region end(Prohibit modification and deletion)
 }
